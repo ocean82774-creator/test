@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>수능 영어 어휘 테스트 게임</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .game-container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .screen {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .screen.active {
+            display: flex;
+        }
+        
+        .title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255,107,107,0.4);
+            margin: 8px;
+            min-width: 130px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255,107,107,0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .next-btn {
+            background: linear-gradient(45deg, #4caf50, #45a049);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 15px 30px;
+            border: 2px solid #2e7d32;
+            color: white;
+            margin: 8px 0;
+            min-width: 160px;
+        }
+        
+        .home-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            border: 1px solid #ddd;
+        }
+        
+        .score {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .question-container {
+            width: 100%;
+            max-width: 350px;
+            margin-top: 50px;
+        }
+        
+        .question-text {
+            font-size: 1rem;
+            color: #333;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .option {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            color: #333;
+            text-align: left;
+        }
+        
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+                 .option.correct {
+             background: white;
+             color: #333;
+             border-color: #4caf50;
+             transform: scale(1.02);
+             position: relative;
+         }
+         
+         .option.correct::after {
+             content: "정답 ✓";
+             position: absolute;
+             right: 15px;
+             top: 50%;
+             transform: translateY(-50%);
+             font-size: 1rem;
+             font-weight: bold;
+             color: #4caf50;
+         }
+        
+        .option.incorrect {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+            border-color: #f44336;
+            transform: scale(1.02);
+        }
+        
+                 .option.selected {
+             background: #667eea;
+             color: white;
+             border-color: #667eea;
+         }
+        
+        .result-message {
+            font-size: 1rem;
+            font-weight: 600;
+            margin: 8px 0;
+            padding: 8px;
+            border-radius: 8px;
+            width: 100%;
+        }
+        
+        .result-message.correct {
+            background: linear-gradient(45deg, #4caf50, #45a049);
+            color: white;
+        }
+        
+        .result-message.incorrect {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+        }
+        
+        .explanation {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            text-align: left;
+            width: 100%;
+        }
+        
+        .explanation p {
+            color: #666;
+            line-height: 1.3;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .explanation p:first-child {
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            margin-top: 4px;
+            padding: 0;
+            background: transparent;
+            border-radius: 0;
+            border: none;
+        }
+        
+        .certificate {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            padding: 30px;
+            border-radius: 20px;
+            border: 3px solid #ffb300;
+            box-shadow: 0 10px 30px rgba(255,215,0,0.3);
+            margin: 20px 0;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        .certificate h2 {
+            color: #b8860b;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .certificate p {
+            color: #8b6914;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #ff6b6b, #ffd700, #4ecdc4);
+            border-radius: 50%;
+            animation: firework 2s ease-out forwards;
+        }
+        
+        @keyframes firework {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+        
+        .flying-image {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            animation: flyLeftToRight 4s linear forwards;
+        }
+        
+        @keyframes flyLeftToRight {
+            0% {
+                left: -60px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+            100% {
+                left: 100%;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .game-container {
+                border-radius: 0;
+                max-height: 100vh;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- 시작 화면 -->
+        <div class="screen active" id="start-screen">
+            <h1 class="title">수능 영어 어휘<br>테스트 게임!</h1>
+            <div class="subtitle">
+                👉 "괄호 안에 가장 알맞은 단어를 고르세요!"<br><br>
+                "총 3문제가 출제되며,<br>
+                맞춘 문제 수에 따라<br>
+                각기 다른 인증서가 발급됩니다!"<br><br>
+                "준비되면 시작 버튼을 눌러주세요!"
+            </div>
+            <button class="btn" onclick="startGame()">시작하기 ▶️</button>
+        </div>
+
+        <!-- 문제 화면들 -->
+        <div class="screen" id="question-1">
+            <div class="score">정답: 0/3</div>
+            <button class="btn home-btn" onclick="goHome()">홈으로 🏠</button>
+            
+            <div class="question-container">
+                <div class="question-text">
+                    The rescue team had to delay operations due to ( ) weather conditions in the mountains.
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 1, 1)">① unfavorable</div>
+                    <div class="option" onclick="selectOption(this, 2, 1)">② favorable</div>
+                    <div class="option" onclick="selectOption(this, 3, 1)">③ adverse</div>
+                    <div class="option" onclick="selectOption(this, 4, 1)">④ unpredictable</div>
+                    <div class="option" onclick="selectOption(this, 5, 1)">⑤ disadvantageous</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="screen" id="question-2">
+            <div class="score">정답: 0/3</div>
+            <button class="btn home-btn" onclick="goHome()">홈으로 🏠</button>
+            
+            <div class="question-container">
+                <div class="question-text">
+                    The company's innovative approach to problem-solving has been ( ) to its success in the competitive market.
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 1, 2)">① detrimental</div>
+                    <div class="option" onclick="selectOption(this, 2, 2)">② instrumental</div>
+                    <div class="option" onclick="selectOption(this, 3, 2)">③ irrelevant</div>
+                    <div class="option" onclick="selectOption(this, 4, 2)">④ superficial</div>
+                    <div class="option" onclick="selectOption(this, 5, 2)">⑤ redundant</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="screen" id="question-3">
+            <div class="score">정답: 0/3</div>
+            <button class="btn home-btn" onclick="goHome()">홈으로 🏠</button>
+            
+            <div class="question-container">
+                <div class="question-text">
+                    Despite the initial skepticism, the new policy has proven to be ( ) in addressing the community's concerns.
+                </div>
+                <div class="options">
+                    <div class="option" onclick="selectOption(this, 1, 3)">① ineffective</div>
+                    <div class="option" onclick="selectOption(this, 2, 3)">② counterproductive</div>
+                    <div class="option" onclick="selectOption(this, 3, 3)">③ beneficial</div>
+                    <div class="option" onclick="selectOption(this, 4, 3)">④ negligible</div>
+                    <div class="option" onclick="selectOption(this, 5, 3)">⑤ detrimental</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div class="screen" id="result-screen">
+            <div class="certificate" id="certificate">
+                <h2 id="cert-title">수능 만점가능자</h2>
+                <p id="cert-desc">축하합니다!</p>
+            </div>
+            
+            <div class="btn-container">
+                <button class="btn" onclick="saveCertificate()">상장 저장하기 💾</button>
+                <button class="btn" onclick="goHome()">홈으로 🏠</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        let correctAnswers = 0;
+        let questions = [
+            {
+                question: "The rescue team had to delay operations due to ( ) weather conditions in the mountains.",
+                options: ["unfavorable", "favorable", "adverse", "unpredictable", "disadvantageous"],
+                correct: 3,
+                answer: "adverse",
+                meaning: "불리한, 해로운",
+                explanation: "구조대는 산에서의 불리한 기상 조건 때문에 작전을 지연해야 했다.",
+                fullText: "The rescue team had to delay operations due to adverse weather conditions in the mountains."
+            },
+            {
+                question: "The company's innovative approach to problem-solving has been ( ) to its success in the competitive market.",
+                options: ["detrimental", "instrumental", "irrelevant", "superficial", "redundant"],
+                correct: 2,
+                answer: "instrumental",
+                meaning: "중요한 역할을 하는, 도움이 되는",
+                explanation: "회사의 혁신적인 문제 해결 접근 방식은 경쟁이 치열한 시장에서의 성공에 중요한 역할을 했다.",
+                fullText: "The company's innovative approach to problem-solving has been instrumental to its success in the competitive market."
+            },
+            {
+                question: "Despite the initial skepticism, the new policy has proven to be ( ) in addressing the community's concerns.",
+                options: ["ineffective", "counterproductive", "beneficial", "negligible", "detrimental"],
+                correct: 3,
+                answer: "beneficial",
+                meaning: "유익한, 이로운",
+                explanation: "초기의 회의론에도 불구하고, 새로운 정책은 지역사회의 우려사항을 해결하는 데 유익한 것으로 입증되었다.",
+                fullText: "Despite the initial skepticism, the new policy has proven to be beneficial in addressing the community's concerns."
+            }
+        ];
+
+        function startGame() {
+            currentQuestion = 1;
+            correctAnswers = 0;
+            showScreen('question-1');
+            updateScore();
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function updateScore() {
+            document.querySelectorAll('.score').forEach(score => {
+                score.textContent = `정답: ${correctAnswers}/3`;
+            });
+        }
+
+        function selectOption(selectedElement, selectedOption, questionNum) {
+            const question = questions[questionNum - 1];
+            const isCorrect = selectedOption === question.correct;
+            
+            // 모든 옵션 비활성화
+            selectedElement.parentElement.querySelectorAll('.option').forEach(option => {
+                option.style.pointerEvents = 'none';
+            });
+            
+            // 선택된 옵션 표시
+            selectedElement.classList.add('selected');
+            
+                         if (isCorrect) {
+                 correctAnswers++;
+                 selectedElement.classList.add('selected');
+                 playSound('Ascending 3.mp3');
+                 showResult(question, true, questionNum);
+             } else {
+                 selectedElement.classList.add('incorrect');
+                 // 정답 표시 (색깔 없이 체크표시만)
+                 selectedElement.parentElement.querySelectorAll('.option').forEach((option, index) => {
+                     if (index + 1 === question.correct) {
+                         option.classList.add('correct');
+                     }
+                 });
+                 playSound('fail_02.mp3');
+                 showFlyingImage();
+                 showResult(question, false, questionNum);
+             }
+            
+            updateScore();
+        }
+
+        function showResult(question, isCorrect, questionNum) {
+            // 기존 결과 요소들 제거
+            const currentScreen = document.getElementById(`question-${questionNum}`);
+            const existingResults = currentScreen.querySelectorAll('.result-message, .explanation, .button-container');
+            existingResults.forEach(el => el.remove());
+            
+            // 결과 메시지
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
+            resultDiv.textContent = isCorrect ? '🎯 정답입니다!' : '오답입니다!';
+            
+            // 설명
+            const explanationDiv = document.createElement('div');
+            explanationDiv.className = 'explanation';
+            explanationDiv.innerHTML = `
+                <p><strong>${question.fullText}</strong></p>
+                <p><strong>${question.answer}</strong> - ${question.meaning}</p>
+                <p>${question.explanation}</p>
+            `;
+            
+            // 다음문제 버튼
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn next-btn';
+            nextBtn.textContent = questionNum < 3 ? '다음문제 🔁' : '결과보기 🎉';
+            nextBtn.onclick = () => goToNextQuestion(questionNum);
+            
+            // 버튼 컨테이너
+            const buttonContainer = document.createElement('div');
+            buttonContainer.className = 'button-container';
+            buttonContainer.appendChild(nextBtn);
+            
+            // 요소들 추가
+            currentScreen.appendChild(resultDiv);
+            currentScreen.appendChild(explanationDiv);
+            currentScreen.appendChild(buttonContainer);
+        }
+
+        function goToNextQuestion(currentQuestionNum) {
+            if (currentQuestionNum < 3) {
+                showScreen(`question-${currentQuestionNum + 1}`);
+            } else {
+                showFinalResult();
+            }
+        }
+
+        function showFinalResult() {
+            let title, desc, message;
+            
+            if (correctAnswers === 3) {
+                title = "🥤 수능 만점가능자";
+                desc = "축하합니다!";
+                message = "🎉 축하합니다! 당신은 수능 만점가능자이시군요!!";
+                playSound('suc_01.mp3');
+            } else if (correctAnswers === 2) {
+                title = "🥤 수능 우수생가능자";
+                desc = "축하합니다!";
+                message = "🎉 축하합니다! 당신은 수능 우수생가능자시군요!";
+                playSound('suc_01.mp3');
+            } else if (correctAnswers === 1) {
+                title = "🥤 수능 만점희망자";
+                desc = "축하합니다!";
+                message = "🎉 축하합니다! 당신은 수능 만점희망자이시군요!";
+                playSound('suc_01.mp3');
+                createFireworks();
+            } else {
+                title = "🥤 수능 우수생 희망자";
+                desc = "아쉽습니다.";
+                message = "아쉽습니다. 다음엔 더 잘하실 수 있을 거에요!";
+                playSound('fail_02.mp3');
+            }
+            
+            document.getElementById('cert-title').textContent = title;
+            document.getElementById('cert-desc').textContent = desc;
+            
+            // 메시지 표시
+            const messageDiv = document.createElement('div');
+            messageDiv.style.cssText = `
+                font-size: 1.3rem;
+                font-weight: 600;
+                margin: 20px 0;
+                padding: 15px;
+                border-radius: 12px;
+                background: linear-gradient(45deg, #4caf50, #45a049);
+                color: white;
+                text-align: center;
+            `;
+            messageDiv.textContent = message;
+            
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.insertBefore(messageDiv, resultScreen.firstChild);
+            
+            showScreen('result-screen');
+        }
+
+        function createFireworks() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = Math.random() * 100 + '%';
+                    firework.style.top = Math.random() * 100 + '%';
+                    document.getElementById('result-screen').appendChild(firework);
+                    
+                    setTimeout(() => {
+                        firework.remove();
+                    }, 2000);
+                }, i * 200);
+            }
+        }
+
+        function showFlyingImage() {
+            const img = document.createElement('img');
+            img.src = 'assets/ggg.png';
+            img.className = 'flying-image';
+            document.body.appendChild(img);
+            
+            setTimeout(() => {
+                img.remove();
+            }, 4000);
+        }
+
+        function playSound(filename) {
+            const audio = new Audio(`assets/${filename}`);
+            audio.play().catch(e => console.log('오디오 재생 실패:', e));
+        }
+
+        function goHome() {
+            // 모든 화면 초기화
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+                // 추가된 요소들 제거
+                screen.querySelectorAll('.result-message, .explanation, .button-container').forEach(el => {
+                    el.remove();
+                });
+            });
+            
+            // 옵션들 초기화
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('correct', 'incorrect', 'selected');
+                option.style.pointerEvents = 'auto';
+            });
+            
+            showScreen('start-screen');
+        }
+
+        function saveCertificate() {
+            // Canvas를 사용한 인증서 이미지 생성 및 다운로드
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800;
+            canvas.height = 600;
+            
+            // 배경
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, 800, 600);
+            
+            // 테두리
+            ctx.strokeStyle = '#ffb300';
+            ctx.lineWidth = 10;
+            ctx.strokeRect(5, 5, 790, 590);
+            
+            // 제목
+            ctx.fillStyle = '#b8860b';
+            ctx.font = 'bold 48px Noto Sans KR';
+            ctx.textAlign = 'center';
+            ctx.fillText('수능 영어 어휘 테스트', 400, 100);
+            
+            // 인증서 내용
+            ctx.font = 'bold 36px Noto Sans KR';
+            ctx.fillText(document.getElementById('cert-title').textContent, 400, 250);
+            
+            ctx.font = '24px Noto Sans KR';
+            ctx.fillText('정답률: ' + correctAnswers + '/3', 400, 350);
+            ctx.fillText('발급일: ' + new Date().toLocaleDateString('ko-KR'), 400, 400);
+            
+            // 다운로드
+            const link = document.createElement('a');
+            link.download = '수능어휘테스트_인증서.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>
