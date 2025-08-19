@@ -15,7 +15,8 @@
         
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #f8f6ff 0%, #f0eeff 50%, #e8e6ff 100%) !important;
+            background-color: #f8f6ff !important;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -28,7 +29,7 @@
             max-width: 400px;
             height: 100vh;
             max-height: 800px;
-            background: white;
+            background: linear-gradient(135deg, #e8d5c4 0%, #f3e9dc 50%, #d4c4b7 100%);
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             position: relative;
@@ -94,17 +95,17 @@
             background: linear-gradient(45deg, #4caf50, #45a049);
             box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
             font-weight: 600;
-            font-size: 1.1rem;
-            padding: 15px 30px;
+            font-size: 1rem;
+            padding: 12px 24px;
             border: 2px solid #2e7d32;
             color: white;
-            margin: 8px 0;
-            min-width: 160px;
+            margin: 6px 0;
+            min-width: 140px;
         }
         
         .home-btn {
             position: absolute;
-            top: 15px;
+            top: 5px;
             right: 15px;
             background: rgba(255,255,255,0.9);
             color: #333;
@@ -517,7 +518,7 @@
             {
                 question: "The research paper presents a ( ) analysis of contemporary social media trends.",
                 options: ["superficial", "comprehensive", "biased", "outdated", "irrelevant"],
-                correct: 2,
+                correct: 3,
                 answer: "comprehensive",
                 meaning: "포괄적인, 종합적인",
                 explanation: "연구 논문은 현대 소셜 미디어 트렌드에 대한 포괄적인 분석을 제시한다.",
@@ -724,7 +725,7 @@
             {
                 question: "The novel's plot becomes increasingly ( ) as the mystery deepens and new clues emerge.",
                 options: ["simple", "intricate", "obvious", "predictable", "straightforward"],
-                correct: 2,
+                correct: 4,
                 answer: "intricate",
                 meaning: "복잡한, 얽힌",
                 explanation: "미스터리가 깊어지고 새로운 단서들이 나타나면서 소설의 줄거리는 점점 더 복잡해진다.",
@@ -733,7 +734,7 @@
             {
                 question: "The diplomat's skillful negotiation helped to ( ) the tensions between the conflicting parties.",
                 options: ["escalate", "alleviate", "increase", "intensify", "aggravate"],
-                correct: 2,
+                correct: 4,
                 answer: "alleviate",
                 meaning: "완화하다, 덜어주다",
                 explanation: "외교관의 능숙한 협상은 갈등하는 당사자들 간의 긴장을 완화하는 데 도움이 되었다.",
@@ -742,7 +743,7 @@
             {
                 question: "The professor's research methodology was ( ) by peers for its rigor and innovation.",
                 options: ["questioned", "commended", "criticized", "rejected", "doubted"],
-                correct: 2,
+                correct: 4,
                 answer: "commended",
                 meaning: "칭찬받은, 추천받은",
                 explanation: "교수의 연구 방법론은 엄격함과 혁신성으로 동료들에게 칭찬받았다.",
@@ -751,7 +752,7 @@
             {
                 question: "The city's infrastructure projects aim to ( ) traffic congestion in downtown areas.",
                 options: ["worsen", "mitigate", "increase", "cause", "promote"],
-                correct: 2,
+                correct: 4,
                 answer: "mitigate",
                 meaning: "완화하다, 경감하다",
                 explanation: "도시의 인프라 프로젝트는 시내 지역의 교통 체증을 완화하는 것을 목표로 한다.",
@@ -760,7 +761,7 @@
             {
                 question: "The author's argument was ( ) by extensive citations from reputable academic sources.",
                 options: ["weakened", "substantiated", "undermined", "contradicted", "refuted"],
-                correct: 2,
+                correct: 4,
                 answer: "substantiated",
                 meaning: "입증된, 뒷받침된",
                 explanation: "작가의 논증은 평판 좋은 학술 자료의 광범위한 인용으로 입증되었다.",
@@ -814,7 +815,7 @@
             {
                 question: "The novel's narrative structure is ( ) complex, requiring careful analysis to fully appreciate.",
                 options: ["deceptively", "inherently", "superficially", "apparently", "seemingly"],
-                correct: 2,
+                correct: 3,
                 answer: "inherently",
                 meaning: "본질적으로, 근본적으로",
                 explanation: "소설의 서사 구조는 본질적으로 복잡하여 완전히 이해하려면 신중한 분석이 필요하다.",
@@ -823,7 +824,7 @@
             {
                 question: "The economic policy has had ( ) consequences for the nation's financial stability.",
                 options: ["beneficial", "detrimental", "neutral", "positive", "constructive"],
-                correct: 2,
+                correct: 3,
                 answer: "detrimental",
                 meaning: "해로운, 손해를 주는",
                 explanation: "경제 정책은 국가의 재정 안정성에 해로운 결과를 가져왔다.",
@@ -832,7 +833,7 @@
             {
                 question: "The artist's work demonstrates an ( ) understanding of classical techniques.",
                 options: ["inadequate", "exceptional", "mediocre", "ordinary", "average"],
-                correct: 2,
+                correct: 3,
                 answer: "exceptional",
                 meaning: "예외적인, 뛰어난",
                 explanation: "예술가의 작품은 고전 기법에 대한 예외적인 이해를 보여준다.",
@@ -841,7 +842,7 @@
             {
                 question: "The research findings ( ) the established theory, forcing scientists to reconsider their assumptions.",
                 options: ["supported", "challenged", "confirmed", "validated", "reinforced"],
-                correct: 2,
+                correct: 3,
                 answer: "challenged",
                 meaning: "도전했다, 의문을 제기했다",
                 explanation: "연구 결과는 기존 이론에 도전하여 과학자들이 가정을 재검토하도록 강요했다.",
@@ -850,7 +851,7 @@
             {
                 question: "The company's innovative strategy proved to be ( ) in the competitive market.",
                 options: ["ineffective", "advantageous", "disadvantageous", "harmful", "detrimental"],
-                correct: 2,
+                correct: 3,
                 answer: "advantageous",
                 meaning: "유리한, 이익이 되는",
                 explanation: "회사의 혁신적인 전략은 경쟁이 치열한 시장에서 유리한 것으로 입증되었다.",
@@ -859,7 +860,7 @@
             {
                 question: "The historian's interpretation of the events was ( ) by newly discovered documents.",
                 options: ["contradicted", "corroborated", "undermined", "refuted", "disproved"],
-                correct: 2,
+                correct: 3,
                 answer: "corroborated",
                 meaning: "확증된, 뒷받침된",
                 explanation: "역사가의 사건 해석은 새로 발견된 문서들에 의해 확증되었다.",
@@ -868,7 +869,7 @@
             {
                 question: "The environmental crisis requires an ( ) response from all nations.",
                 options: ["immediate", "urgent", "gradual", "delayed", "postponed"],
-                correct: 2,
+                correct: 3,
                 answer: "urgent",
                 meaning: "긴급한, 시급한",
                 explanation: "환경 위기는 모든 국가의 긴급한 대응을 요구한다.",
@@ -877,7 +878,7 @@
             {
                 question: "The mathematician's proof was ( ) elegant, demonstrating remarkable ingenuity.",
                 options: ["exceptionally", "moderately", "slightly", "barely", "hardly"],
-                correct: 2,
+                correct: 3,
                 answer: "exceptionally",
                 meaning: "예외적으로, 특별히",
                 explanation: "수학자의 증명은 예외적으로 우아하여 놀라운 창의성을 보여주었다.",
@@ -886,7 +887,7 @@
             {
                 question: "The literary critic's analysis revealed the ( ) themes embedded in the novel.",
                 options: ["obvious", "subtle", "explicit", "clear", "apparent"],
-                correct: 2,
+                correct: 3,
                 answer: "subtle",
                 meaning: "미묘한, 섬세한",
                 explanation: "문학 비평가의 분석은 소설에 내재된 미묘한 주제들을 드러냈다.",
@@ -895,7 +896,7 @@
             {
                 question: "The technological advancement has ( ) implications for future generations.",
                 options: ["minimal", "profound", "superficial", "minor", "negligible"],
-                correct: 2,
+                correct: 3,
                 answer: "profound",
                 meaning: "심오한, 깊이 있는",
                 explanation: "기술적 진보는 미래 세대에게 심오한 함의를 가지고 있다.",
@@ -904,7 +905,7 @@
             {
                 question: "The architect's design philosophy emphasizes ( ) integration with the natural environment.",
                 options: ["seamless", "artificial", "forced", "awkward", "unnatural"],
-                correct: 2,
+                correct: 1,
                 answer: "seamless",
                 meaning: "완벽한, 자연스러운",
                 explanation: "건축가의 설계 철학은 자연 환경과의 완벽한 통합을 강조한다.",
@@ -922,7 +923,7 @@
             {
                 question: "The economic forecast proved to be ( ) accurate, despite market uncertainties.",
                 options: ["surprisingly", "predictably", "expectedly", "naturally", "obviously"],
-                correct: 2,
+                correct: 1,
                 answer: "surprisingly",
                 meaning: "놀랍게도, 의외로",
                 explanation: "경제 전망은 시장의 불확실성에도 불구하고 놀랍게도 정확했다.",
@@ -931,7 +932,7 @@
             {
                 question: "The cultural exchange program fostered ( ) understanding between the two nations.",
                 options: ["mutual", "one-sided", "biased", "partial", "incomplete"],
-                correct: 2,
+                correct: 3,
                 answer: "mutual",
                 meaning: "상호적인, 양방향의",
                 explanation: "문화 교환 프로그램은 두 국가 간의 상호적인 이해를 촉진했다.",
@@ -940,7 +941,7 @@
             {
                 question: "The scientific breakthrough represents a ( ) leap forward in medical research.",
                 options: ["modest", "significant", "minor", "incremental", "gradual"],
-                correct: 2,
+                correct: 4,
                 answer: "significant",
                 meaning: "중요한, 의미 있는",
                 explanation: "과학적 돌파구는 의학 연구에서 중요한 도약을 나타낸다.",
@@ -949,7 +950,7 @@
             {
                 question: "The philosopher's argument was ( ) flawed, containing several logical fallacies.",
                 options: ["fundamentally", "slightly", "minimally", "barely", "hardly"],
-                correct: 2,
+                correct: 1,
                 answer: "fundamentally",
                 meaning: "근본적으로, 본질적으로",
                 explanation: "철학자의 논증은 근본적으로 결함이 있어 여러 논리적 오류를 포함하고 있었다.",
@@ -1030,7 +1031,7 @@
             {
                 question: "The architectural design reflects the ( ) principles of sustainability.",
                 options: ["fundamental", "secondary", "minor", "peripheral", "incidental"],
-                correct: 2,
+                correct: 1,
                 answer: "fundamental",
                 meaning: "근본적인, 기본적인",
                 explanation: "건축 설계는 지속가능성의 근본적인 원칙들을 반영한다.",
@@ -1057,7 +1058,7 @@
             {
                 question: "The artistic movement challenged ( ) conventions and established new standards.",
                 options: ["traditional", "modern", "contemporary", "current", "present"],
-                correct: 2,
+                correct: 1,
                 answer: "traditional",
                 meaning: "전통적인, 관습적인",
                 explanation: "예술 운동은 전통적인 관습에 도전하고 새로운 기준을 확립했다.",
@@ -1120,11 +1121,146 @@
             {
                 question: "The economic analysis reveals ( ) trends in consumer behavior.",
                 options: ["obvious", "underlying", "superficial", "apparent", "visible"],
-                correct: 2,
+                correct: 3,
                 answer: "underlying",
                 meaning: "근본적인, 내재된",
                 explanation: "경제 분석은 소비자 행동의 근본적인 트렌드를 드러낸다.",
                 fullText: "The economic analysis reveals underlying trends in consumer behavior."
+            },
+            {
+                question: "The philosopher's treatise presents an ( ) examination of existential dilemmas.",
+                options: ["arduous", "superficial", "simplistic", "elementary", "basic"],
+                correct: 1,
+                answer: "arduous",
+                meaning: "힘든, 어려운",
+                explanation: "철학자의 논문은 실존적 딜레마에 대한 힘든 탐구를 제시한다.",
+                fullText: "The philosopher's treatise presents an arduous examination of existential dilemmas."
+            },
+            {
+                question: "The scientist's methodology demonstrates ( ) precision in experimental design.",
+                "options": ["meticulous", "approximate", "rough", "general", "vague"],
+                correct: 1,
+                answer: "meticulous",
+                meaning: "꼼꼼한, 세심한",
+                explanation: "과학자의 방법론은 실험 설계에서 꼼꼼한 정밀성을 보여준다.",
+                fullText: "The scientist's methodology demonstrates meticulous precision in experimental design."
+            },
+            {
+                question: "The literary critic's analysis reveals ( ) insights into the author's narrative technique.",
+                options: ["profound", "shallow", "superficial", "obvious", "apparent"],
+                correct: 1,
+                answer: "profound",
+                meaning: "심오한, 깊이 있는",
+                explanation: "문학 비평가의 분석은 작가의 서사 기법에 대한 심오한 통찰을 드러낸다.",
+                fullText: "The literary critic's analysis reveals profound insights into the author's narrative technique."
+            },
+            {
+                question: "The diplomat's negotiation strategy exhibits ( ) sophistication in conflict resolution.",
+                options: ["remarkable", "ordinary", "mediocre", "average", "common"],
+                correct: 1,
+                answer: "remarkable",
+                meaning: "주목할 만한, 놀라운",
+                explanation: "외교관의 협상 전략은 갈등 해결에서 주목할 만한 정교함을 보여준다.",
+                fullText: "The diplomat's negotiation strategy exhibits remarkable sophistication in conflict resolution."
+            },
+            {
+                question: "The architect's innovative design incorporates ( ) principles of sustainable development.",
+                options: ["fundamental", "secondary", "minor", "peripheral", "incidental"],
+                correct: 1,
+                answer: "fundamental",
+                meaning: "근본적인, 기본적인",
+                explanation: "건축가의 혁신적인 설계는 지속가능한 발전의 근본적인 원칙들을 통합한다.",
+                fullText: "The architect's innovative design incorporates fundamental principles of sustainable development."
+            },
+            {
+                question: "The historian's interpretation provides an ( ) perspective on medieval social structures.",
+                options: ["illuminating", "confusing", "misleading", "obscure", "unclear"],
+                correct: 1,
+                answer: "illuminating",
+                meaning: "밝혀주는, 설명하는",
+                explanation: "역사가의 해석은 중세 사회 구조에 대한 밝혀주는 관점을 제공한다.",
+                fullText: "The historian's interpretation provides an illuminating perspective on medieval social structures."
+            },
+            {
+                question: "The researcher's findings demonstrate ( ) implications for future scientific inquiry.",
+                options: ["far-reaching", "limited", "narrow", "restricted", "confined"],
+                correct: 1,
+                answer: "far-reaching",
+                meaning: "광범위한, 넓은 범위의",
+                explanation: "연구자의 발견은 미래 과학적 탐구에 광범위한 함의를 보여준다.",
+                fullText: "The researcher's findings demonstrate far-reaching implications for future scientific inquiry."
+            },
+            {
+                question: "The economist's analysis reveals ( ) patterns in global market dynamics.",
+                options: ["underlying", "obvious", "apparent", "visible", "evident"],
+                correct: 1,
+                answer: "underlying",
+                meaning: "근본적인, 내재된",
+                explanation: "경제학자의 분석은 글로벌 시장 역학의 근본적인 패턴을 드러낸다.",
+                fullText: "The economist's analysis reveals underlying patterns in global market dynamics."
+            },
+            {
+                question: "The psychologist's study offers ( ) insights into human cognitive processes.",
+                options: ["valuable", "worthless", "useless", "meaningless", "pointless"],
+                correct: 1,
+                answer: "valuable",
+                meaning: "가치 있는, 유용한",
+                explanation: "심리학자의 연구는 인간 인지 과정에 대한 가치 있는 통찰을 제공한다.",
+                fullText: "The psychologist's study offers valuable insights into human cognitive processes."
+            },
+            {
+                question: "The environmental scientist's research demonstrates ( ) evidence of climate change impacts.",
+                options: ["compelling", "weak", "inconclusive", "doubtful", "questionable"],
+                correct: 1,
+                answer: "compelling",
+                meaning: "설득력 있는, 강력한",
+                explanation: "환경 과학자의 연구는 기후 변화 영향에 대한 설득력 있는 증거를 보여준다.",
+                fullText: "The environmental scientist's research demonstrates compelling evidence of climate change impacts."
+            },
+            {
+                question: "The philosopher's argument presents a ( ) challenge to conventional thinking.",
+                options: ["minor", "simple", "basic", "daunting", "easy"],
+                correct: 4,
+                answer: "daunting",
+                meaning: "위압적인, 겁나는",
+                explanation: "철학자의 논증은 기존 사고에 위압적인 도전을 제시한다.",
+                fullText: "The philosopher's argument presents a daunting challenge to conventional thinking."
+            },
+            {
+                question: "The technological breakthrough represents an ( ) advance in the field.",
+                options: ["incremental", "gradual", "modest", "revolutionary", "minor"],
+                correct: 4,
+                answer: "revolutionary",
+                meaning: "혁명적인, 획기적인",
+                explanation: "기술적 돌파구는 해당 분야에서 혁명적인 진보를 나타낸다.",
+                fullText: "The technological breakthrough represents a revolutionary advance in the field."
+            },
+            {
+                question: "The cultural heritage site requires ( ) preservation efforts to maintain its integrity.",
+                options: ["minimal", "basic", "simple", "thorough", "limited"],
+                correct: 4,
+                answer: "thorough",
+                meaning: "철저한, 완전한",
+                explanation: "문화유산 사이트는 그 완전성을 유지하기 위해 철저한 보존 노력이 필요하다.",
+                fullText: "The cultural heritage site requires thorough preservation efforts to maintain its integrity."
+            },
+            {
+                question: "The scientific discovery has ( ) implications for future research directions.",
+                options: ["minimal", "limited", "narrow", "profound", "restricted"],
+                correct: 4,
+                answer: "profound",
+                meaning: "심오한, 깊이 있는",
+                explanation: "과학적 발견은 미래 연구 방향에 심오한 함의를 가지고 있다.",
+                fullText: "The scientific discovery has profound implications for future research directions."
+            },
+            {
+                question: "The literary analysis offers an ( ) interpretation of the author's intentions.",
+                options: ["superficial", "shallow", "obvious", "enlightening", "basic"],
+                correct: 4,
+                answer: "enlightening",
+                meaning: "계몽적인, 깨우치는",
+                explanation: "문학 분석은 작가의 의도에 대한 계몽적인 해석을 제공한다.",
+                fullText: "The literary analysis offers an enlightening interpretation of the author's intentions."
             }
         ];
 
