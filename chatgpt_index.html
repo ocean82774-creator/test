@@ -1,0 +1,1765 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>수능 영어 어휘 테스트 게임</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #d4c8e8 0%, #c0b0d8 50%, #a898c8 100%) !important;
+            background-color: #d4c8e8 !important;
+            min-height: 100vh; display:flex; justify-content:center; align-items:center; overflow:hidden;
+        }
+        .game-container { width:100%; max-width:400px; height:100vh; max-height:800px;
+            background: linear-gradient(135deg, #e8d5c4 0%, #f3e9dc 50%, #d4c4b7 100%);
+            border-radius:20px; box-shadow:0 20px 40px rgba(0,0,0,0.1);
+            position:relative; overflow:hidden; }
+        .screen { width:100%; height:100%; display:none; flex-direction:column; align-items:center; justify-content:center; padding:15px; text-align:center; position:relative; }
+        .screen.active { display:flex; }
+        .title { font-size:2.2rem; font-weight:700; color:#333; margin-bottom:15px; text-shadow:2px 2px 4px rgba(0,0,0,0.1); }
+        .subtitle { font-size:1.1rem; color:#666; line-height:1.5; margin-bottom:25px; }
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24); color:white; border:none; padding:12px 25px;
+            border-radius:50px; font-size:1rem; font-weight:500; cursor:pointer; transition:all .3s ease;
+            box-shadow:0 4px 12px rgba(255,107,107,0.4); margin:8px; min-width:130px;
+        }
+        .btn:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(255,107,107,0.6); }
+        .btn:active { transform:translateY(0); }
+        .next-btn { background: linear-gradient(45deg, #4caf50, #45a049); box-shadow:0 4px 12px rgba(76,175,80,0.4);
+            font-weight:600; font-size:1rem; padding:12px 24px; border:2px solid #2e7d32; color:white; margin:6px 0; min-width:140px; }
+        .home-btn { position:absolute; top:5px; right:15px; background:rgba(255,255,255,0.9); color:#333; padding:6px 12px; border-radius:20px; font-size:.8rem; border:1px solid #ddd; }
+        .score { position:absolute; top:15px; left:15px; background:rgba(76,175,80,0.9); color:white; padding:6px 12px; border-radius:20px; font-size:.8rem; font-weight:500; }
+        .question-container { width:100%; max-width:350px; margin-top:50px; }
+        .question-text { font-size:1rem; color:#333; line-height:1.5; margin-bottom:20px; background:#f8f9fa; padding:15px; border-radius:12px; border-left:4px solid #667eea; }
+        .options { display:flex; flex-direction:column; gap:8px; }
+        .option { background:white; border:2px solid #e9ecef; border-radius:10px; padding:12px; cursor:pointer; transition:all .3s ease; font-size:.9rem; color:#333; text-align:left; }
+        .option:hover { border-color:#667eea; background:#f8f9ff; }
+        .option.correct { background:white; color:#333; border-color:#4caf50; transform:scale(1.02); position:relative; }
+        .option.correct::after { content:'정답 ✓'; position:absolute; right:15px; top:50%; transform:translateY(-50%); font-size:1rem; font-weight:bold; color:#4caf50; }
+        .option.incorrect { background: linear-gradient(45deg, #f44336, #d32f2f); color:white; border-color:#f44336; transform:scale(1.02); }
+        .option.selected { background:#667eea; color:white; border-color:#667eea; }
+        .result-message { font-size:1rem; font-weight:600; margin:8px 0; padding:8px; border-radius:8px; width:100%; }
+        .result-message.correct { background: linear-gradient(45deg, #4caf50, #45a049); color:white; }
+        .result-message.incorrect { background: linear-gradient(45deg, #f44336, #d32f2f); color:white; }
+        .explanation { background:#f8f9fa; padding:10px; border-radius:8px; margin:8px 0; text-align:left; width:100%; }
+        .explanation p { color:#666; line-height:1.3; margin-bottom:6px; font-size:.9rem; }
+        .explanation p:first-child { color:#333; font-weight:500; margin-bottom:8px; }
+        .button-container { display:flex; flex-direction:column; align-items:center; gap:6px; width:100%; margin-top:4px; padding:0; background:transparent; border-radius:0; border:none; }
+        .certificate { background: linear-gradient(135deg, #ffd700, #ffed4e); padding:30px; border-radius:20px; border:3px solid #ffb300; box-shadow:0 10px 30px rgba(255,215,0,0.3); margin:20px 0; width:100%; max-width:300px; }
+        .certificate h2 { color:#b8860b; font-size:1.5rem; margin-bottom:10px; text-shadow:1px 1px 2px rgba(0,0,0,0.1); }
+        .certificate p { color:#8b6914; font-size:1.1rem; font-weight:500; }
+        .firework { position:absolute; width:10px; height:10px; background:radial-gradient(circle, #ff6b6b, #ffd700, #4ecdc4); border-radius:50%; animation:firework 2s ease-out forwards; }
+        @keyframes firework { 0%{transform:scale(0); opacity:1;} 50%{transform:scale(1); opacity:1;} 100%{transform:scale(0); opacity:0;} }
+        .flying-image { position:absolute; width:60px; height:60px; animation: flyLeftToRight 4s linear forwards; }
+        @keyframes flyLeftToRight { 0%{left:-60px; top:50%; transform:translateY(-50%);} 100%{left:100%; top:50%; transform:translateY(-50%);} }
+        @media (max-width: 480px) { .game-container { border-radius:0; max-height:100vh; } .title{font-size:2rem;} .subtitle{font-size:1rem;} }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- 시작 화면 -->
+        <div class="screen active" id="start-screen">
+            <h1 class="title">수능 영어 어휘<br/>테스트 게임!</h1>
+            <div class="subtitle">
+                👉 "괄호 안에 가장 알맞은 단어를 고르세요!"<br/><br/>
+                "총 3문제가 출제되며,<br/>
+                맞춘 문제 수에 따라<br/>
+                각기 다른 인증서가 발급됩니다!"<br/><br/>
+                "준비되면 시작 버튼을 눌러주세요!"
+            </div>
+            <button class="btn" onclick="startGame()">시작하기 ▶️</button>
+        </div>
+
+        <!-- 문제 화면들 -->
+        <div class="screen" id="question-1">
+            <div class="score">정답: 0/3</div>
+            <button class="btn home-btn" onclick="goHome()">홈으로 🏠</button>
+            <div class="question-container">
+                <div class="question-text">문제 로딩 중…</div>
+                <div class="options">
+                    <div class="option">①</div>
+                    <div class="option">②</div>
+                    <div class="option">③</div>
+                    <div class="option">④</div>
+                    <div class="option">⑤</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="screen" id="question-2">
+            <div class="score">정답: 0/3</div>
+            <button class="btn home-btn" onclick="goHome()">홈으로 🏠</button>
+            <div class="question-container">
+                <div class="question-text">문제 로딩 중…</div>
+                <div class="options">
+                    <div class="option">①</div>
+                    <div class="option">②</div>
+                    <div class="option">③</div>
+                    <div class="option">④</div>
+                    <div class="option">⑤</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="screen" id="question-3">
+            <div class="score">정답: 0/3</div>
+            <button class="btn home-btn" onclick="goHome()">홈으로 🏠</button>
+            <div class="question-container">
+                <div class="question-text">문제 로딩 중…</div>
+                <div class="options">
+                    <div class="option">①</div>
+                    <div class="option">②</div>
+                    <div class="option">③</div>
+                    <div class="option">④</div>
+                    <div class="option">⑤</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결과 화면 -->
+        <div class="screen" id="result-screen">
+            <div class="certificate" id="certificate">
+                <h2 id="cert-title">수능 만점가능자</h2>
+                <p id="cert-desc">축하합니다!</p>
+            </div>
+            <div class="btn-container">
+                <button class="btn" onclick="saveCertificate()">상장 저장하기 💾</button>
+                <button class="btn" onclick="goHome()">홈으로 🏠</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== 데이터 원본 (사용자 제공 목록) =====
+        const QUESTIONS_RAW = [
+  {
+    "question": "The rescue team had to delay operations due to ( ) weather conditions in the mountains.",
+    "options": [
+      "unfavorable",
+      "favorable",
+      "adverse",
+      "unpredictable",
+      "disadvantageous"
+    ],
+    "correct": 3,
+    "answer": "adverse",
+    "meaning": "불리한, 해로운",
+    "explanation": "구조대는 산에서의 불리한 기상 조건 때문에 작전을 지연해야 했다.",
+    "fullText": "The rescue team had to delay operations due to adverse weather conditions in the mountains."
+  },
+  {
+    "question": "The company's innovative approach to problem-solving has been ( ) to its success in the competitive market.",
+    "options": [
+      "detrimental",
+      "instrumental",
+      "irrelevant",
+      "superficial",
+      "redundant"
+    ],
+    "correct": 2,
+    "answer": "instrumental",
+    "meaning": "중요한 역할을 하는, 도움이 되는",
+    "explanation": "회사의 혁신적인 문제 해결 접근 방식은 경쟁이 치열한 시장에서의 성공에 중요한 역할을 했다.",
+    "fullText": "The company's innovative approach to problem-solving has been instrumental to its success in the competitive market."
+  },
+  {
+    "question": "Despite the initial skepticism, the new policy has proven to be ( ) in addressing the community's concerns.",
+    "options": [
+      "ineffective",
+      "counterproductive",
+      "beneficial",
+      "negligible",
+      "detrimental"
+    ],
+    "correct": 3,
+    "answer": "beneficial",
+    "meaning": "유익한, 이로운",
+    "explanation": "초기의 회의론에도 불구하고, 새로운 정책은 지역사회의 우려사항을 해결하는 데 유익한 것으로 입증되었다.",
+    "fullText": "Despite the initial skepticism, the new policy has proven to be beneficial in addressing the community's concerns."
+  },
+  {
+    "question": "The research findings were ( ) to the scientific community, leading to groundbreaking discoveries.",
+    "options": [
+      "insignificant",
+      "revolutionary",
+      "controversial",
+      "outdated",
+      "misleading"
+    ],
+    "correct": 2,
+    "answer": "revolutionary",
+    "meaning": "혁명적인, 획기적인",
+    "explanation": "연구 결과는 과학계에 혁명적이었으며, 획기적인 발견으로 이어졌다.",
+    "fullText": "The research findings were revolutionary to the scientific community, leading to groundbreaking discoveries."
+  },
+  {
+    "question": "Her ( ) attitude toward learning made her an exemplary student.",
+    "options": [
+      "passive",
+      "enthusiastic",
+      "indifferent",
+      "reluctant",
+      "hostile"
+    ],
+    "correct": 2,
+    "answer": "enthusiastic",
+    "meaning": "열정적인, 열심인",
+    "explanation": "그녀의 학습에 대한 열정적인 태도가 그녀를 모범적인 학생으로 만들었다.",
+    "fullText": "Her enthusiastic attitude toward learning made her an exemplary student."
+  },
+  {
+    "question": "The economic crisis had a ( ) impact on small businesses.",
+    "options": [
+      "minimal",
+      "positive",
+      "devastating",
+      "temporary",
+      "beneficial"
+    ],
+    "correct": 3,
+    "answer": "devastating",
+    "meaning": "파괴적인, 치명적인",
+    "explanation": "경제 위기는 소규모 사업체에 파괴적인 영향을 미쳤다.",
+    "fullText": "The economic crisis had a devastating impact on small businesses."
+  },
+  {
+    "question": "His ( ) knowledge of history impressed everyone at the conference.",
+    "options": [
+      "superficial",
+      "extensive",
+      "limited",
+      "outdated",
+      "inaccurate"
+    ],
+    "correct": 2,
+    "answer": "extensive",
+    "meaning": "광범위한, 포괄적인",
+    "explanation": "그의 역사에 대한 광범위한 지식이 회의에 참석한 모든 사람들에게 깊은 인상을 남겼다.",
+    "fullText": "His extensive knowledge of history impressed everyone at the conference."
+  },
+  {
+    "question": "The team's ( ) efforts resulted in a successful project completion.",
+    "options": [
+      "halfhearted",
+      "collaborative",
+      "individual",
+      "conflicting",
+      "sporadic"
+    ],
+    "correct": 2,
+    "answer": "collaborative",
+    "meaning": "협력적인, 협동적인",
+    "explanation": "팀의 협력적인 노력으로 프로젝트가 성공적으로 완료되었다.",
+    "fullText": "The team's collaborative efforts resulted in a successful project completion."
+  },
+  {
+    "question": "The movie received ( ) reviews from critics and audiences alike.",
+    "options": [
+      "mixed",
+      "negative",
+      "positive",
+      "controversial",
+      "unanimous"
+    ],
+    "correct": 3,
+    "answer": "positive",
+    "meaning": "긍정적인, 호의적인",
+    "explanation": "그 영화는 비평가들과 관객들로부터 모두 긍정적인 평가를 받았다.",
+    "fullText": "The movie received positive reviews from critics and audiences alike."
+  },
+  {
+    "question": "The government's ( ) response to the crisis was widely criticized.",
+    "options": [
+      "immediate",
+      "delayed",
+      "appropriate",
+      "inadequate",
+      "comprehensive"
+    ],
+    "correct": 4,
+    "answer": "inadequate",
+    "meaning": "부적절한, 불충분한",
+    "explanation": "정부의 위기에 대한 부적절한 대응이 널리 비판받았다.",
+    "fullText": "The government's inadequate response to the crisis was widely criticized."
+  },
+  {
+    "question": "The research paper presents a ( ) analysis of contemporary social media trends.",
+    "options": [
+      "superficial",
+      "comprehensive",
+      "biased",
+      "outdated",
+      "irrelevant"
+    ],
+    "correct": 2,
+    "answer": "comprehensive",
+    "meaning": "포괄적인, 종합적인",
+    "explanation": "연구 논문은 현대 소셜 미디어 트렌드에 대한 포괄적인 분석을 제시한다.",
+    "fullText": "The research paper presents a comprehensive analysis of contemporary social media trends."
+  },
+  {
+    "question": "The artist's work was ( ) by critics for its originality and emotional depth.",
+    "options": [
+      "dismissed",
+      "criticized",
+      "acclaimed",
+      "ignored",
+      "questioned"
+    ],
+    "correct": 3,
+    "answer": "acclaimed",
+    "meaning": "찬사를 받은, 격찬받은",
+    "explanation": "그 예술가의 작품은 독창성과 감정적 깊이로 비평가들에게 찬사를 받았다.",
+    "fullText": "The artist's work was acclaimed by critics for its originality and emotional depth."
+  },
+  {
+    "question": "The professor's lecture was so ( ) that many students struggled to follow the complex arguments.",
+    "options": [
+      "elementary",
+      "abstract",
+      "practical",
+      "simple",
+      "obvious"
+    ],
+    "correct": 2,
+    "answer": "abstract",
+    "meaning": "추상적인, 이해하기 어려운",
+    "explanation": "교수의 강의가 너무 추상적이어서 많은 학생들이 복잡한 논증을 따라가는 데 어려움을 겪었다.",
+    "fullText": "The professor's lecture was so abstract that many students struggled to follow the complex arguments."
+  },
+  {
+    "question": "The witness provided a ( ) account of the events that occurred during the incident.",
+    "options": [
+      "vague",
+      "detailed",
+      "biased",
+      "contradictory",
+      "unreliable"
+    ],
+    "correct": 2,
+    "answer": "detailed",
+    "meaning": "상세한, 자세한",
+    "explanation": "목격자는 사건 중에 일어난 일들에 대한 상세한 설명을 제공했다.",
+    "fullText": "The witness provided a detailed account of the events that occurred during the incident."
+  },
+  {
+    "question": "The committee decided to ( ) the proposal until more information could be gathered.",
+    "options": [
+      "approve",
+      "reject",
+      "postpone",
+      "implement",
+      "finalize"
+    ],
+    "correct": 3,
+    "answer": "postpone",
+    "meaning": "연기하다, 미루다",
+    "explanation": "위원회는 더 많은 정보를 수집할 때까지 제안을 연기하기로 결정했다.",
+    "fullText": "The committee decided to postpone the proposal until more information could be gathered."
+  },
+  {
+    "question": "The scientist's hypothesis was ( ) by extensive experimental data collected over several years.",
+    "options": [
+      "contradicted",
+      "supported",
+      "ignored",
+      "dismissed",
+      "questioned"
+    ],
+    "correct": 2,
+    "answer": "supported",
+    "meaning": "지지받은, 뒷받침된",
+    "explanation": "과학자의 가설은 수년에 걸쳐 수집된 광범위한 실험 데이터에 의해 뒷받침되었다.",
+    "fullText": "The scientist's hypothesis was supported by extensive experimental data collected over several years."
+  },
+  {
+    "question": "The new technology has the ( ) to revolutionize the way we communicate.",
+    "options": [
+      "inability",
+      "potential",
+      "failure",
+      "weakness",
+      "limitation"
+    ],
+    "correct": 2,
+    "answer": "potential",
+    "meaning": "잠재력, 가능성",
+    "explanation": "새로운 기술은 우리가 소통하는 방식을 혁신할 잠재력을 가지고 있다.",
+    "fullText": "The new technology has the potential to revolutionize the way we communicate."
+  },
+  {
+    "question": "The debate became increasingly ( ) as both sides refused to compromise on their positions.",
+    "options": [
+      "productive",
+      "heated",
+      "peaceful",
+      "constructive",
+      "friendly"
+    ],
+    "correct": 2,
+    "answer": "heated",
+    "meaning": "격렬한, 열띤",
+    "explanation": "양측이 자신들의 입장에서 타협을 거부하면서 토론은 점점 더 격렬해졌다.",
+    "fullText": "The debate became increasingly heated as both sides refused to compromise on their positions."
+  },
+  {
+    "question": "The ancient artifact was discovered in ( ) condition, surprising archaeologists worldwide.",
+    "options": [
+      "deteriorated",
+      "pristine",
+      "damaged",
+      "fragmented",
+      "corroded"
+    ],
+    "correct": 2,
+    "answer": "pristine",
+    "meaning": "원시 상태의, 완벽한",
+    "explanation": "고대 유물이 완벽한 상태로 발견되어 전 세계 고고학자들을 놀라게 했다.",
+    "fullText": "The ancient artifact was discovered in pristine condition, surprising archaeologists worldwide."
+  },
+  {
+    "question": "The journalist's investigation ( ) corruption at the highest levels of government.",
+    "options": [
+      "concealed",
+      "revealed",
+      "ignored",
+      "dismissed",
+      "avoided"
+    ],
+    "correct": 2,
+    "answer": "revealed",
+    "meaning": "드러냈다, 폭로했다",
+    "explanation": "기자의 조사는 정부 최고위층의 부패를 드러냈다.",
+    "fullText": "The journalist's investigation revealed corruption at the highest levels of government."
+  },
+  {
+    "question": "The medical breakthrough offers ( ) hope for patients suffering from rare diseases.",
+    "options": [
+      "false",
+      "unprecedented",
+      "limited",
+      "temporary",
+      "questionable"
+    ],
+    "correct": 2,
+    "answer": "unprecedented",
+    "meaning": "전례 없는, 미증유의",
+    "explanation": "의학적 돌파구는 희귀 질환으로 고통받는 환자들에게 전례 없는 희망을 제공한다.",
+    "fullText": "The medical breakthrough offers unprecedented hope for patients suffering from rare diseases."
+  },
+  {
+    "question": "The author's writing style is characterized by its ( ) use of metaphors and symbolism.",
+    "options": [
+      "sparse",
+      "elaborate",
+      "simple",
+      "minimal",
+      "basic"
+    ],
+    "correct": 2,
+    "answer": "elaborate",
+    "meaning": "정교한, 공들인",
+    "explanation": "작가의 문체는 은유와 상징주의의 정교한 사용으로 특징지어진다.",
+    "fullText": "The author's writing style is characterized by its elaborate use of metaphors and symbolism."
+  },
+  {
+    "question": "The environmental organization launched a campaign to ( ) public awareness about climate change.",
+    "options": [
+      "diminish",
+      "heighten",
+      "reduce",
+      "suppress",
+      "limit"
+    ],
+    "correct": 2,
+    "answer": "heighten",
+    "meaning": "높이다, 증진시키다",
+    "explanation": "환경 단체는 기후 변화에 대한 대중의 인식을 높이기 위한 캠페인을 시작했다.",
+    "fullText": "The environmental organization launched a campaign to heighten public awareness about climate change."
+  },
+  {
+    "question": "The philosopher's argument was both ( ) and thought-provoking, challenging conventional wisdom.",
+    "options": [
+      "conventional",
+      "radical",
+      "traditional",
+      "conservative",
+      "orthodox"
+    ],
+    "correct": 2,
+    "answer": "radical",
+    "meaning": "급진적인, 근본적인",
+    "explanation": "철학자의 논증은 급진적이면서도 생각을 자극하여 기존의 통념에 도전했다.",
+    "fullText": "The philosopher's argument was both radical and thought-provoking, challenging conventional wisdom."
+  },
+  {
+    "question": "The company's financial situation became ( ) after a series of poor investment decisions.",
+    "options": [
+      "stable",
+      "precarious",
+      "secure",
+      "prosperous",
+      "profitable"
+    ],
+    "correct": 2,
+    "answer": "precarious",
+    "meaning": "불안정한, 위태로운",
+    "explanation": "일련의 잘못된 투자 결정 후에 회사의 재정 상황이 불안정해졌다.",
+    "fullText": "The company's financial situation became precarious after a series of poor investment decisions."
+  },
+  {
+    "question": "The athlete's performance was ( ) considering the intense pressure and competition.",
+    "options": [
+      "disappointing",
+      "remarkable",
+      "average",
+      "poor",
+      "mediocre"
+    ],
+    "correct": 2,
+    "answer": "remarkable",
+    "meaning": "주목할 만한, 놀라운",
+    "explanation": "극심한 압박과 경쟁을 고려할 때 선수의 성과는 주목할 만했다.",
+    "fullText": "The athlete's performance was remarkable considering the intense pressure and competition."
+  },
+  {
+    "question": "The museum's new exhibition aims to ( ) visitors' understanding of ancient civilizations.",
+    "options": [
+      "confuse",
+      "broaden",
+      "limit",
+      "narrow",
+      "restrict"
+    ],
+    "correct": 2,
+    "answer": "broaden",
+    "meaning": "넓히다, 확장하다",
+    "explanation": "박물관의 새로운 전시는 고대 문명에 대한 관람객들의 이해를 넓히는 것을 목표로 한다.",
+    "fullText": "The museum's new exhibition aims to broaden visitors' understanding of ancient civilizations."
+  },
+  {
+    "question": "The politician's speech was criticized for being ( ) rather than addressing specific policy issues.",
+    "options": [
+      "concrete",
+      "vague",
+      "detailed",
+      "precise",
+      "explicit"
+    ],
+    "correct": 2,
+    "answer": "vague",
+    "meaning": "모호한, 애매한",
+    "explanation": "정치인의 연설은 구체적인 정책 문제를 다루기보다는 모호하다고 비판받았다.",
+    "fullText": "The politician's speech was criticized for being vague rather than addressing specific policy issues."
+  },
+  {
+    "question": "The documentary film provides an ( ) look at the challenges facing modern society.",
+    "options": [
+      "superficial",
+      "insightful",
+      "biased",
+      "incomplete",
+      "misleading"
+    ],
+    "correct": 2,
+    "answer": "insightful",
+    "meaning": "통찰력 있는, 예리한",
+    "explanation": "다큐멘터리 영화는 현대 사회가 직면한 도전들에 대한 통찰력 있는 시각을 제공한다.",
+    "fullText": "The documentary film provides an insightful look at the challenges facing modern society."
+  },
+  {
+    "question": "The architect's design was ( ) for its innovative use of sustainable materials.",
+    "options": [
+      "criticized",
+      "praised",
+      "rejected",
+      "ignored",
+      "dismissed"
+    ],
+    "correct": 2,
+    "answer": "praised",
+    "meaning": "칭찬받은, 찬사를 받은",
+    "explanation": "건축가의 설계는 지속 가능한 재료의 혁신적인 사용으로 칭찬받았다.",
+    "fullText": "The architect's design was praised for its innovative use of sustainable materials."
+  },
+  {
+    "question": "The economic downturn had a ( ) impact on small businesses throughout the region.",
+    "options": [
+      "positive",
+      "devastating",
+      "negligible",
+      "beneficial",
+      "minor"
+    ],
+    "correct": 2,
+    "answer": "devastating",
+    "meaning": "파괴적인, 치명적인",
+    "explanation": "경기 침체는 지역 전반의 소규모 사업체에 파괴적인 영향을 미쳤다.",
+    "fullText": "The economic downturn had a devastating impact on small businesses throughout the region."
+  },
+  {
+    "question": "The researcher's findings ( ) the commonly held belief about the effectiveness of the treatment.",
+    "options": [
+      "confirmed",
+      "contradicted",
+      "supported",
+      "reinforced",
+      "validated"
+    ],
+    "correct": 2,
+    "answer": "contradicted",
+    "meaning": "모순되었다, 반박했다",
+    "explanation": "연구자의 발견은 치료의 효과에 대한 일반적인 믿음과 모순되었다.",
+    "fullText": "The researcher's findings contradicted the commonly held belief about the effectiveness of the treatment."
+  },
+  {
+    "question": "The novel's plot becomes increasingly ( ) as the mystery deepens and new clues emerge.",
+    "options": [
+      "simple",
+      "intricate",
+      "obvious",
+      "predictable",
+      "straightforward"
+    ],
+    "correct": 2,
+    "answer": "intricate",
+    "meaning": "복잡한, 얽힌",
+    "explanation": "미스터리가 깊어지고 새로운 단서들이 나타나면서 소설의 줄거리는 점점 더 복잡해진다.",
+    "fullText": "The novel's plot becomes increasingly intricate as the mystery deepens and new clues emerge."
+  },
+  {
+    "question": "The diplomat's skillful negotiation helped to ( ) the tensions between the conflicting parties.",
+    "options": [
+      "escalate",
+      "alleviate",
+      "increase",
+      "intensify",
+      "aggravate"
+    ],
+    "correct": 2,
+    "answer": "alleviate",
+    "meaning": "완화하다, 덜어주다",
+    "explanation": "외교관의 능숙한 협상은 갈등하는 당사자들 간의 긴장을 완화하는 데 도움이 되었다.",
+    "fullText": "The diplomat's skillful negotiation helped to alleviate the tensions between the conflicting parties."
+  },
+  {
+    "question": "The professor's research methodology was ( ) by peers for its rigor and innovation.",
+    "options": [
+      "questioned",
+      "commended",
+      "criticized",
+      "rejected",
+      "doubted"
+    ],
+    "correct": 2,
+    "answer": "commended",
+    "meaning": "칭찬받은, 추천받은",
+    "explanation": "교수의 연구 방법론은 엄격함과 혁신성으로 동료들에게 칭찬받았다.",
+    "fullText": "The professor's research methodology was commended by peers for its rigor and innovation."
+  },
+  {
+    "question": "The city's infrastructure projects aim to ( ) traffic congestion in downtown areas.",
+    "options": [
+      "worsen",
+      "mitigate",
+      "increase",
+      "cause",
+      "promote"
+    ],
+    "correct": 2,
+    "answer": "mitigate",
+    "meaning": "완화하다, 경감하다",
+    "explanation": "도시의 인프라 프로젝트는 시내 지역의 교통 체증을 완화하는 것을 목표로 한다.",
+    "fullText": "The city's infrastructure projects aim to mitigate traffic congestion in downtown areas."
+  },
+  {
+    "question": "The author's argument was ( ) by extensive citations from reputable academic sources.",
+    "options": [
+      "weakened",
+      "substantiated",
+      "undermined",
+      "contradicted",
+      "refuted"
+    ],
+    "correct": 2,
+    "answer": "substantiated",
+    "meaning": "입증된, 뒷받침된",
+    "explanation": "작가의 논증은 평판 좋은 학술 자료의 광범위한 인용으로 입증되었다.",
+    "fullText": "The author's argument was substantiated by extensive citations from reputable academic sources."
+  },
+  {
+    "question": "The medical treatment showed ( ) results in clinical trials, exceeding all expectations.",
+    "options": [
+      "disappointing",
+      "promising",
+      "negative",
+      "harmful",
+      "inadequate"
+    ],
+    "correct": 2,
+    "answer": "promising",
+    "meaning": "유망한, 희망적인",
+    "explanation": "의학적 치료는 임상 시험에서 모든 기대를 뛰어넘는 유망한 결과를 보여주었다.",
+    "fullText": "The medical treatment showed promising results in clinical trials, exceeding all expectations."
+  },
+  {
+    "question": "The philosopher's treatise presented a ( ) critique of modern ethical frameworks.",
+    "options": [
+      "superficial",
+      "profound",
+      "simplistic",
+      "naive",
+      "elementary"
+    ],
+    "correct": 2,
+    "answer": "profound",
+    "meaning": "심오한, 깊이 있는",
+    "explanation": "철학자의 논문은 현대 윤리 체계에 대한 심오한 비판을 제시했다.",
+    "fullText": "The philosopher's treatise presented a profound critique of modern ethical frameworks."
+  },
+  {
+    "question": "The archaeological discovery provided ( ) evidence of ancient trade networks.",
+    "options": [
+      "circumstantial",
+      "conclusive",
+      "ambiguous",
+      "questionable",
+      "inconclusive"
+    ],
+    "correct": 2,
+    "answer": "conclusive",
+    "meaning": "결정적인, 확실한",
+    "explanation": "고고학적 발견은 고대 무역 네트워크의 결정적인 증거를 제공했다.",
+    "fullText": "The archaeological discovery provided conclusive evidence of ancient trade networks."
+  },
+  {
+    "question": "The diplomat's ( ) approach to the crisis prevented further escalation.",
+    "options": [
+      "reckless",
+      "diplomatic",
+      "aggressive",
+      "confrontational",
+      "provocative"
+    ],
+    "correct": 2,
+    "answer": "diplomatic",
+    "meaning": "외교적인, 신중한",
+    "explanation": "외교관의 외교적인 접근 방식이 위기의 더 큰 확산을 막았다.",
+    "fullText": "The diplomat's diplomatic approach to the crisis prevented further escalation."
+  },
+  {
+    "question": "The scientist's methodology was characterized by its ( ) attention to detail.",
+    "options": [
+      "casual",
+      "meticulous",
+      "hasty",
+      "careless",
+      "superficial"
+    ],
+    "correct": 2,
+    "answer": "meticulous",
+    "meaning": "꼼꼼한, 세심한",
+    "explanation": "과학자의 방법론은 세부사항에 대한 꼼꼼한 주의가 특징이었다.",
+    "fullText": "The scientist's methodology was characterized by its meticulous attention to detail."
+  },
+  {
+    "question": "The novel's narrative structure is ( ) complex, requiring careful analysis to fully appreciate.",
+    "options": [
+      "deceptively",
+      "inherently",
+      "superficially",
+      "apparently",
+      "seemingly"
+    ],
+    "correct": 2,
+    "answer": "inherently",
+    "meaning": "본질적으로, 근본적으로",
+    "explanation": "소설의 서사 구조는 본질적으로 복잡하여 완전히 이해하려면 신중한 분석이 필요하다.",
+    "fullText": "The novel's narrative structure is inherently complex, requiring careful analysis to fully appreciate."
+  },
+  {
+    "question": "The artist's work demonstrates an ( ) understanding of classical techniques.",
+    "options": [
+      "inadequate",
+      "exceptional",
+      "mediocre",
+      "ordinary",
+      "average"
+    ],
+    "correct": 2,
+    "answer": "exceptional",
+    "meaning": "예외적인, 뛰어난",
+    "explanation": "예술가의 작품은 고전 기법에 대한 예외적인 이해를 보여준다.",
+    "fullText": "The artist's work demonstrates an exceptional understanding of classical techniques."
+  },
+  {
+    "question": "The research findings ( ) the established theory, forcing scientists to reconsider their assumptions.",
+    "options": [
+      "supported",
+      "challenged",
+      "confirmed",
+      "validated",
+      "reinforced"
+    ],
+    "correct": 2,
+    "answer": "challenged",
+    "meaning": "도전했다, 의문을 제기했다",
+    "explanation": "연구 결과는 기존 이론에 도전하여 과학자들이 가정을 재검토하도록 강요했다.",
+    "fullText": "The research findings challenged the established theory, forcing scientists to reconsider their assumptions."
+  },
+  {
+    "question": "The company's innovative strategy proved to be ( ) in the competitive market.",
+    "options": [
+      "ineffective",
+      "advantageous",
+      "disadvantageous",
+      "harmful",
+      "detrimental"
+    ],
+    "correct": 2,
+    "answer": "advantageous",
+    "meaning": "유리한, 이익이 되는",
+    "explanation": "회사의 혁신적인 전략은 경쟁이 치열한 시장에서 유리한 것으로 입증되었다.",
+    "fullText": "The company's innovative strategy proved to be advantageous in the competitive market."
+  },
+  {
+    "question": "The historian's interpretation of the events was ( ) by newly discovered documents.",
+    "options": [
+      "contradicted",
+      "corroborated",
+      "undermined",
+      "refuted",
+      "disproved"
+    ],
+    "correct": 2,
+    "answer": "corroborated",
+    "meaning": "확증된, 뒷받침된",
+    "explanation": "역사가의 사건 해석은 새로 발견된 문서들에 의해 확증되었다.",
+    "fullText": "The historian's interpretation of the events was corroborated by newly discovered documents."
+  },
+  {
+    "question": "The environmental crisis requires an ( ) response from all nations.",
+    "options": [
+      "immediate",
+      "urgent",
+      "gradual",
+      "delayed",
+      "postponed"
+    ],
+    "correct": 2,
+    "answer": "urgent",
+    "meaning": "긴급한, 시급한",
+    "explanation": "환경 위기는 모든 국가의 긴급한 대응을 요구한다.",
+    "fullText": "The environmental crisis requires an urgent response from all nations."
+  },
+  {
+    "question": "The mathematician's proof was ( ) elegant, demonstrating remarkable ingenuity.",
+    "options": [
+      "exceptionally",
+      "moderately",
+      "slightly",
+      "barely",
+      "hardly"
+    ],
+    "correct": 1,
+    "answer": "exceptionally",
+    "meaning": "예외적으로, 특별히",
+    "explanation": "수학자의 증명은 예외적으로 우아하여 놀라운 창의성을 보여주었다.",
+    "fullText": "The mathematician's proof was exceptionally elegant, demonstrating remarkable ingenuity."
+  },
+  {
+    "question": "The literary critic's analysis revealed the ( ) themes embedded in the novel.",
+    "options": [
+      "obvious",
+      "subtle",
+      "explicit",
+      "clear",
+      "apparent"
+    ],
+    "correct": 2,
+    "answer": "subtle",
+    "meaning": "미묘한, 섬세한",
+    "explanation": "문학 비평가의 분석은 소설에 내재된 미묘한 주제들을 드러냈다.",
+    "fullText": "The literary critic's analysis revealed the subtle themes embedded in the novel."
+  },
+  {
+    "question": "The technological advancement has ( ) implications for future generations.",
+    "options": [
+      "minimal",
+      "profound",
+      "superficial",
+      "minor",
+      "negligible"
+    ],
+    "correct": 2,
+    "answer": "profound",
+    "meaning": "심오한, 깊이 있는",
+    "explanation": "기술적 진보는 미래 세대에게 심오한 함의를 가지고 있다.",
+    "fullText": "The technological advancement has profound implications for future generations."
+  },
+  {
+    "question": "The architect's design philosophy emphasizes ( ) integration with the natural environment.",
+    "options": [
+      "seamless",
+      "artificial",
+      "forced",
+      "awkward",
+      "unnatural"
+    ],
+    "correct": 1,
+    "answer": "seamless",
+    "meaning": "완벽한, 자연스러운",
+    "explanation": "건축가의 설계 철학은 자연 환경과의 완벽한 통합을 강조한다.",
+    "fullText": "The architect's design philosophy emphasizes seamless integration with the natural environment."
+  },
+  {
+    "question": "The psychologist's research methodology was ( ) rigorous, ensuring reliable results.",
+    "options": [
+      "moderately",
+      "exceptionally",
+      "slightly",
+      "barely",
+      "hardly"
+    ],
+    "correct": 2,
+    "answer": "exceptionally",
+    "meaning": "예외적으로, 특별히",
+    "explanation": "심리학자의 연구 방법론은 예외적으로 엄격하여 신뢰할 수 있는 결과를 보장했다.",
+    "fullText": "The psychologist's research methodology was exceptionally rigorous, ensuring reliable results."
+  },
+  {
+    "question": "The economic forecast proved to be ( ) accurate, despite market uncertainties.",
+    "options": [
+      "surprisingly",
+      "predictably",
+      "expectedly",
+      "naturally",
+      "obviously"
+    ],
+    "correct": 1,
+    "answer": "surprisingly",
+    "meaning": "놀랍게도, 의외로",
+    "explanation": "경제 전망은 시장의 불확실성에도 불구하고 놀랍게도 정확했다.",
+    "fullText": "The economic forecast proved to be surprisingly accurate, despite market uncertainties."
+  },
+  {
+    "question": "The cultural exchange program fostered ( ) understanding between the two nations.",
+    "options": [
+      "mutual",
+      "one-sided",
+      "biased",
+      "partial",
+      "incomplete"
+    ],
+    "correct": 1,
+    "answer": "mutual",
+    "meaning": "상호적인, 양방향의",
+    "explanation": "문화 교환 프로그램은 두 국가 간의 상호적인 이해를 촉진했다.",
+    "fullText": "The cultural exchange program fostered mutual understanding between the two nations."
+  },
+  {
+    "question": "The scientific breakthrough represents a ( ) leap forward in medical research.",
+    "options": [
+      "modest",
+      "significant",
+      "minor",
+      "incremental",
+      "gradual"
+    ],
+    "correct": 2,
+    "answer": "significant",
+    "meaning": "중요한, 의미 있는",
+    "explanation": "과학적 돌파구는 의학 연구에서 중요한 도약을 나타낸다.",
+    "fullText": "The scientific breakthrough represents a significant leap forward in medical research."
+  },
+  {
+    "question": "The philosopher's argument was ( ) flawed, containing several logical fallacies.",
+    "options": [
+      "fundamentally",
+      "slightly",
+      "minimally",
+      "barely",
+      "hardly"
+    ],
+    "correct": 1,
+    "answer": "fundamentally",
+    "meaning": "근본적으로, 본질적으로",
+    "explanation": "철학자의 논증은 근본적으로 결함이 있어 여러 논리적 오류를 포함하고 있었다.",
+    "fullText": "The philosopher's argument was fundamentally flawed, containing several logical fallacies."
+  },
+  {
+    "question": "The artist's latest work demonstrates a ( ) departure from traditional techniques.",
+    "options": [
+      "subtle",
+      "radical",
+      "minor",
+      "gradual",
+      "incremental"
+    ],
+    "correct": 2,
+    "answer": "radical",
+    "meaning": "급진적인, 근본적인",
+    "explanation": "예술가의 최신 작품은 전통적 기법에서 급진적인 이탈을 보여준다.",
+    "fullText": "The artist's latest work demonstrates a radical departure from traditional techniques."
+  },
+  {
+    "question": "The environmental policy has been ( ) effective in reducing carbon emissions.",
+    "options": [
+      "moderately",
+      "remarkably",
+      "slightly",
+      "barely",
+      "hardly"
+    ],
+    "correct": 2,
+    "answer": "remarkably",
+    "meaning": "놀랍게도, 현저하게",
+    "explanation": "환경 정책은 탄소 배출량 감소에 놀랍게도 효과적이었다.",
+    "fullText": "The environmental policy has been remarkably effective in reducing carbon emissions."
+  },
+  {
+    "question": "The historian's analysis provides an ( ) perspective on the ancient civilization.",
+    "options": [
+      "incomplete",
+      "illuminating",
+      "confusing",
+      "misleading",
+      "superficial"
+    ],
+    "correct": 2,
+    "answer": "illuminating",
+    "meaning": "밝혀주는, 설명하는",
+    "explanation": "역사가의 분석은 고대 문명에 대한 밝혀주는 관점을 제공한다.",
+    "fullText": "The historian's analysis provides an illuminating perspective on the ancient civilization."
+  },
+  {
+    "question": "The technological innovation has ( ) transformed the industry landscape.",
+    "options": [
+      "gradually",
+      "dramatically",
+      "slightly",
+      "minimally",
+      "incrementally"
+    ],
+    "correct": 2,
+    "answer": "dramatically",
+    "meaning": "극적으로, 놀랍게도",
+    "explanation": "기술적 혁신은 산업 환경을 극적으로 변화시켰다.",
+    "fullText": "The technological innovation has dramatically transformed the industry landscape."
+  },
+  {
+    "question": "The literary work explores the ( ) nature of human relationships.",
+    "options": [
+      "simple",
+      "complex",
+      "obvious",
+      "clear",
+      "apparent"
+    ],
+    "correct": 2,
+    "answer": "complex",
+    "meaning": "복잡한, 얽힌",
+    "explanation": "문학 작품은 인간 관계의 복잡한 본성을 탐구한다.",
+    "fullText": "The literary work explores the complex nature of human relationships."
+  },
+  {
+    "question": "The scientist's hypothesis was ( ) supported by experimental evidence.",
+    "options": [
+      "weakly",
+      "strongly",
+      "minimally",
+      "barely",
+      "hardly"
+    ],
+    "correct": 2,
+    "answer": "strongly",
+    "meaning": "강하게, 확실하게",
+    "explanation": "과학자의 가설은 실험적 증거에 의해 강하게 뒷받침되었다.",
+    "fullText": "The scientist's hypothesis was strongly supported by experimental evidence."
+  },
+  {
+    "question": "The economic reform has had ( ) positive effects on the nation's development.",
+    "options": [
+      "negligible",
+      "substantial",
+      "minimal",
+      "minor",
+      "insignificant"
+    ],
+    "correct": 2,
+    "answer": "substantial",
+    "meaning": "상당한, 실질적인",
+    "explanation": "경제 개혁은 국가 발전에 상당한 긍정적 효과를 가져왔다.",
+    "fullText": "The economic reform has had substantial positive effects on the nation's development."
+  },
+  {
+    "question": "The cultural movement represents a ( ) shift in societal values.",
+    "options": [
+      "minor",
+      "profound",
+      "superficial",
+      "temporary",
+      "insignificant"
+    ],
+    "correct": 2,
+    "answer": "profound",
+    "meaning": "심오한, 깊이 있는",
+    "explanation": "문화 운동은 사회적 가치관의 심오한 변화를 나타낸다.",
+    "fullText": "The cultural movement represents a profound shift in societal values."
+  },
+  {
+    "question": "The architectural design reflects the ( ) principles of sustainability.",
+    "options": [
+      "fundamental",
+      "secondary",
+      "minor",
+      "peripheral",
+      "incidental"
+    ],
+    "correct": 1,
+    "answer": "fundamental",
+    "meaning": "근본적인, 기본적인",
+    "explanation": "건축 설계는 지속가능성의 근본적인 원칙들을 반영한다.",
+    "fullText": "The architectural design reflects the fundamental principles of sustainability."
+  },
+  {
+    "question": "The psychological study revealed ( ) patterns in human behavior under stress.",
+    "options": [
+      "random",
+      "predictable",
+      "consistent",
+      "irregular",
+      "chaotic"
+    ],
+    "correct": 2,
+    "answer": "predictable",
+    "meaning": "예측 가능한, 예상되는",
+    "explanation": "심리학 연구는 스트레스 상황에서의 인간 행동의 예측 가능한 패턴을 드러냈다.",
+    "fullText": "The psychological study revealed predictable patterns in human behavior under stress."
+  },
+  {
+    "question": "The economic theory provides a ( ) framework for understanding market dynamics.",
+    "options": [
+      "flawed",
+      "comprehensive",
+      "incomplete",
+      "biased",
+      "limited"
+    ],
+    "correct": 2,
+    "answer": "comprehensive",
+    "meaning": "포괄적인, 종합적인",
+    "explanation": "경제 이론은 시장 역학을 이해하기 위한 포괄적인 틀을 제공한다.",
+    "fullText": "The economic theory provides a comprehensive framework for understanding market dynamics."
+  },
+  {
+    "question": "The artistic movement challenged ( ) conventions and established new standards.",
+    "options": [
+      "traditional",
+      "modern",
+      "contemporary",
+      "current",
+      "present"
+    ],
+    "correct": 1,
+    "answer": "traditional",
+    "meaning": "전통적인, 관습적인",
+    "explanation": "예술 운동은 전통적인 관습에 도전하고 새로운 기준을 확립했다.",
+    "fullText": "The artistic movement challenged traditional conventions and established new standards."
+  },
+  {
+    "question": "The scientific discovery has ( ) implications for future research directions.",
+    "options": [
+      "minimal",
+      "far-reaching",
+      "limited",
+      "narrow",
+      "restricted"
+    ],
+    "correct": 2,
+    "answer": "far-reaching",
+    "meaning": "광범위한, 넓은 범위의",
+    "explanation": "과학적 발견은 미래 연구 방향에 광범위한 함의를 가지고 있다.",
+    "fullText": "The scientific discovery has far-reaching implications for future research directions."
+  },
+  {
+    "question": "The literary analysis offers an ( ) interpretation of the author's intentions.",
+    "options": [
+      "superficial",
+      "insightful",
+      "shallow",
+      "superficial",
+      "obvious"
+    ],
+    "correct": 2,
+    "answer": "insightful",
+    "meaning": "통찰력 있는, 예리한",
+    "explanation": "문학 분석은 작가의 의도에 대한 통찰력 있는 해석을 제공한다.",
+    "fullText": "The literary analysis offers an insightful interpretation of the author's intentions."
+  },
+  {
+    "question": "The technological breakthrough represents an ( ) advance in the field.",
+    "options": [
+      "incremental",
+      "unprecedented",
+      "gradual",
+      "modest",
+      "minor"
+    ],
+    "correct": 2,
+    "answer": "unprecedented",
+    "meaning": "전례 없는, 미증유의",
+    "explanation": "기술적 돌파구는 해당 분야에서 전례 없는 진보를 나타낸다.",
+    "fullText": "The technological breakthrough represents an unprecedented advance in the field."
+  },
+  {
+    "question": "The environmental initiative has been ( ) successful in achieving its goals.",
+    "options": [
+      "moderately",
+      "exceptionally",
+      "slightly",
+      "barely",
+      "hardly"
+    ],
+    "correct": 2,
+    "answer": "exceptionally",
+    "meaning": "예외적으로, 특별히",
+    "explanation": "환경 이니셔티브는 목표 달성에 예외적으로 성공적이었다.",
+    "fullText": "The environmental initiative has been exceptionally successful in achieving its goals."
+  },
+  {
+    "question": "The cultural heritage site requires ( ) preservation efforts to maintain its integrity.",
+    "options": [
+      "minimal",
+      "extensive",
+      "limited",
+      "basic",
+      "simple"
+    ],
+    "correct": 2,
+    "answer": "extensive",
+    "meaning": "광범위한, 포괄적인",
+    "explanation": "문화유산 사이트는 그 완전성을 유지하기 위해 광범위한 보존 노력이 필요하다.",
+    "fullText": "The cultural heritage site requires extensive preservation efforts to maintain its integrity."
+  },
+  {
+    "question": "The philosophical argument presents a ( ) challenge to conventional thinking.",
+    "options": [
+      "minor",
+      "formidable",
+      "simple",
+      "easy",
+      "straightforward"
+    ],
+    "correct": 2,
+    "answer": "formidable",
+    "meaning": "위협적인, 대단한",
+    "explanation": "철학적 논증은 기존 사고에 위협적인 도전을 제시한다.",
+    "fullText": "The philosophical argument presents a formidable challenge to conventional thinking."
+  },
+  {
+    "question": "The economic analysis reveals ( ) trends in consumer behavior.",
+    "options": [
+      "obvious",
+      "underlying",
+      "superficial",
+      "apparent",
+      "visible"
+    ],
+    "correct": 2,
+    "answer": "underlying",
+    "meaning": "근본적인, 내재된",
+    "explanation": "경제 분석은 소비자 행동의 근본적인 트렌드를 드러낸다.",
+    "fullText": "The economic analysis reveals underlying trends in consumer behavior."
+  },
+  {
+    "question": "The philosopher's treatise presents an ( ) examination of existential dilemmas.",
+    "options": [
+      "arduous",
+      "superficial",
+      "simplistic",
+      "elementary",
+      "basic"
+    ],
+    "correct": 1,
+    "answer": "arduous",
+    "meaning": "힘든, 어려운",
+    "explanation": "철학자의 논문은 실존적 딜레마에 대한 힘든 탐구를 제시한다.",
+    "fullText": "The philosopher's treatise presents an arduous examination of existential dilemmas."
+  },
+  {
+    "question": "The scientist's methodology demonstrates ( ) precision in experimental design.",
+    "options": [
+      "meticulous",
+      "approximate",
+      "rough",
+      "general",
+      "vague"
+    ],
+    "correct": 1,
+    "answer": "meticulous",
+    "meaning": "꼼꼼한, 세심한",
+    "explanation": "과학자의 방법론은 실험 설계에서 꼼꼼한 정밀성을 보여준다.",
+    "fullText": "The scientist's methodology demonstrates meticulous precision in experimental design."
+  },
+  {
+    "question": "The literary critic's analysis reveals ( ) insights into the author's narrative technique.",
+    "options": [
+      "profound",
+      "shallow",
+      "superficial",
+      "obvious",
+      "apparent"
+    ],
+    "correct": 1,
+    "answer": "profound",
+    "meaning": "심오한, 깊이 있는",
+    "explanation": "문학 비평가의 분석은 작가의 서사 기법에 대한 심오한 통찰을 드러낸다.",
+    "fullText": "The literary critic's analysis reveals profound insights into the author's narrative technique."
+  },
+  {
+    "question": "The diplomat's negotiation strategy exhibits ( ) sophistication in conflict resolution.",
+    "options": [
+      "remarkable",
+      "ordinary",
+      "mediocre",
+      "average",
+      "common"
+    ],
+    "correct": 1,
+    "answer": "remarkable",
+    "meaning": "주목할 만한, 놀라운",
+    "explanation": "외교관의 협상 전략은 갈등 해결에서 주목할 만한 정교함을 보여준다.",
+    "fullText": "The diplomat's negotiation strategy exhibits remarkable sophistication in conflict resolution."
+  },
+  {
+    "question": "The architect's innovative design incorporates ( ) principles of sustainable development.",
+    "options": [
+      "fundamental",
+      "secondary",
+      "minor",
+      "peripheral",
+      "incidental"
+    ],
+    "correct": 1,
+    "answer": "fundamental",
+    "meaning": "근본적인, 기본적인",
+    "explanation": "건축가의 혁신적인 설계는 지속가능한 발전의 근본적인 원칙들을 통합한다.",
+    "fullText": "The architect's innovative design incorporates fundamental principles of sustainable development."
+  },
+  {
+    "question": "The historian's interpretation provides an ( ) perspective on medieval social structures.",
+    "options": [
+      "illuminating",
+      "confusing",
+      "misleading",
+      "obscure",
+      "unclear"
+    ],
+    "correct": 1,
+    "answer": "illuminating",
+    "meaning": "밝혀주는, 설명하는",
+    "explanation": "역사가의 해석은 중세 사회 구조에 대한 밝혀주는 관점을 제공한다.",
+    "fullText": "The historian's interpretation provides an illuminating perspective on medieval social structures."
+  },
+  {
+    "question": "The researcher's findings demonstrate ( ) implications for future scientific inquiry.",
+    "options": [
+      "far-reaching",
+      "limited",
+      "narrow",
+      "restricted",
+      "confined"
+    ],
+    "correct": 1,
+    "answer": "far-reaching",
+    "meaning": "광범위한, 넓은 범위의",
+    "explanation": "연구자의 발견은 미래 과학적 탐구에 광범위한 함의를 보여준다.",
+    "fullText": "The researcher's findings demonstrate far-reaching implications for future scientific inquiry."
+  },
+  {
+    "question": "The economist's analysis reveals ( ) patterns in global market dynamics.",
+    "options": [
+      "underlying",
+      "obvious",
+      "apparent",
+      "visible",
+      "evident"
+    ],
+    "correct": 1,
+    "answer": "underlying",
+    "meaning": "근본적인, 내재된",
+    "explanation": "경제학자의 분석은 글로벌 시장 역학의 근본적인 패턴을 드러낸다.",
+    "fullText": "The economist's analysis reveals underlying patterns in global market dynamics."
+  },
+  {
+    "question": "The psychologist's study offers ( ) insights into human cognitive processes.",
+    "options": [
+      "valuable",
+      "worthless",
+      "useless",
+      "meaningless",
+      "pointless"
+    ],
+    "correct": 1,
+    "answer": "valuable",
+    "meaning": "가치 있는, 유용한",
+    "explanation": "심리학자의 연구는 인간 인지 과정에 대한 가치 있는 통찰을 제공한다.",
+    "fullText": "The psychologist's study offers valuable insights into human cognitive processes."
+  },
+  {
+    "question": "The environmental scientist's research demonstrates ( ) evidence of climate change impacts.",
+    "options": [
+      "compelling",
+      "weak",
+      "inconclusive",
+      "doubtful",
+      "questionable"
+    ],
+    "correct": 1,
+    "answer": "compelling",
+    "meaning": "설득력 있는, 강력한",
+    "explanation": "환경 과학자의 연구는 기후 변화 영향에 대한 설득력 있는 증거를 보여준다.",
+    "fullText": "The environmental scientist's research demonstrates compelling evidence of climate change impacts."
+  },
+  {
+    "question": "The philosopher's argument presents a ( ) challenge to conventional thinking.",
+    "options": [
+      "minor",
+      "simple",
+      "basic",
+      "daunting",
+      "easy"
+    ],
+    "correct": 4,
+    "answer": "daunting",
+    "meaning": "위압적인, 겁나는",
+    "explanation": "철학자의 논증은 기존 사고에 위압적인 도전을 제시한다.",
+    "fullText": "The philosopher's argument presents a daunting challenge to conventional thinking."
+  },
+  {
+    "question": "The technological breakthrough represents an ( ) advance in the field.",
+    "options": [
+      "incremental",
+      "gradual",
+      "modest",
+      "revolutionary",
+      "minor"
+    ],
+    "correct": 4,
+    "answer": "revolutionary",
+    "meaning": "혁명적인, 획기적인",
+    "explanation": "기술적 돌파구는 해당 분야에서 혁명적인 진보를 나타낸다.",
+    "fullText": "The technological breakthrough represents a revolutionary advance in the field."
+  },
+  {
+    "question": "The cultural heritage site requires ( ) preservation efforts to maintain its integrity.",
+    "options": [
+      "minimal",
+      "basic",
+      "simple",
+      "thorough",
+      "limited"
+    ],
+    "correct": 4,
+    "answer": "thorough",
+    "meaning": "철저한, 완전한",
+    "explanation": "문화유산 사이트는 그 완전성을 유지하기 위해 철저한 보존 노력이 필요하다.",
+    "fullText": "The cultural heritage site requires thorough preservation efforts to maintain its integrity."
+  },
+  {
+    "question": "The scientific discovery has ( ) implications for future research directions.",
+    "options": [
+      "minimal",
+      "limited",
+      "narrow",
+      "profound",
+      "restricted"
+    ],
+    "correct": 4,
+    "answer": "profound",
+    "meaning": "심오한, 깊이 있는",
+    "explanation": "과학적 발견은 미래 연구 방향에 심오한 함의를 가지고 있다.",
+    "fullText": "The scientific discovery has profound implications for future research directions."
+  },
+  {
+    "question": "The literary analysis offers an ( ) interpretation of the author's intentions.",
+    "options": [
+      "superficial",
+      "shallow",
+      "obvious",
+      "enlightening",
+      "basic"
+    ],
+    "correct": 4,
+    "answer": "enlightening",
+    "meaning": "계몽적인, 깨우치는",
+    "explanation": "문학 분석은 작가의 의도에 대한 계몽적인 해석을 제공한다.",
+    "fullText": "The literary analysis offers an enlightening interpretation of the author's intentions."
+  }
+];
+
+        // ===== 유틸: Fisher–Yates 셔플 =====
+        function shuffleInPlace(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ===== 1) 중복 제거(질문 텍스트 기준) =====
+        function dedupeQuestions(raw) {
+            const map = new Map();
+            for (const q of raw) {
+                if (!map.has(q.question)) {
+                    map.set(q.question, q);
+                }
+            }
+            return Array.from(map.values());
+        }
+
+        // ===== 전역 상태 =====
+        let questions = [];          // deduped
+        let selectedQuestions = [];  // 3개 뽑은 뒤 순서 셔플된 배열
+        let currentQuestion = 1;
+        let correctAnswers = 0;
+
+        // ===== 게임 시작 =====
+        function startGame() {
+            // 데이터 준비
+            questions = dedupeQuestions(QUESTIONS_RAW);
+            // 2) 3문제 무작위 선택 (중복 없이) + 3) 선택된 3문제의 순서 셔플
+            selectedQuestions = getRandomQuestions(3);
+            currentQuestion = 1;
+            correctAnswers = 0;
+            showScreen('question-1');
+            updateScore();
+            // 첫 문제 로딩
+            displayQuestion(1);
+        }
+
+        function getRandomQuestions(count) {
+            const pool = questions.slice(); // 사본
+            // 풀 자체를 셔플한 뒤 앞에서 count개를 자르면, "조합 균등 + 순서 균등" 확보
+            shuffleInPlace(pool);
+            const picked = pool.slice(0, Math.min(count, pool.length));
+            return picked;
+        }
+
+        // ===== 보기까지 셔플하여 표시 =====
+        function displayQuestion(questionNum) {
+            const q = selectedQuestions[questionNum - 1];
+            if (!q) return;
+
+            const screen = document.getElementById(`question-${questionNum}`);
+            const qText = screen.querySelector('.question-text');
+            const optionsEls = screen.querySelectorAll('.option');
+
+            // 보기와 정답 플래그 페어링
+            const paired = q.options.map((opt, i) => ({
+                text: opt,
+                isAnswer: (i + 1) === q.correct
+            }));
+            shuffleInPlace(paired);
+            const shuffledCorrectIndex = paired.findIndex(p => p.isAnswer) + 1; // 1~5
+            // 셔플된 정답 인덱스를 상태에 저장
+            q.shuffledCorrect = shuffledCorrectIndex;
+
+            // 화면 초기화 및 반영
+            qText.textContent = q.question;
+            optionsEls.forEach((el, idx) => {
+                el.classList.remove('correct', 'incorrect', 'selected');
+                el.style.pointerEvents = 'auto';
+                el.textContent = `${String.fromCharCode(9312 + idx)} ${paired[idx].text}`;
+                el.onclick = () => selectOption(el, idx + 1, questionNum);
+            });
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function updateScore() {
+            document.querySelectorAll('.score').forEach(s => {
+                s.textContent = `정답: ${correctAnswers}/3`;
+            });
+        }
+
+        function selectOption(selectedEl, selectedIdx, questionNum) {
+            const q = selectedQuestions[questionNum - 1];
+            const correctIdx = q.shuffledCorrect ?? q.correct;
+            const isCorrect = (selectedIdx === correctIdx);
+
+            // 클릭 잠금
+            selectedEl.parentElement.querySelectorAll('.option').forEach(opt => opt.style.pointerEvents = 'none');
+            selectedEl.classList.add('selected');
+
+            if (isCorrect) {
+                correctAnswers++;
+                playSound('Ascending 3.mp3');
+                showResult(q, true, questionNum);
+            } else {
+                selectedEl.classList.add('incorrect');
+                // 정답 표시
+                selectedEl.parentElement.querySelectorAll('.option').forEach((opt, i) => {
+                    if (i + 1 === correctIdx) opt.classList.add('correct');
+                });
+                playSound('fail_02.mp3');
+                showFlyingImage();
+                showResult(q, false, questionNum);
+            }
+            updateScore();
+        }
+
+        function showResult(q, isCorrect, questionNum) {
+            const currentScreen = document.getElementById(`question-${questionNum}`);
+            currentScreen.querySelectorAll('.result-message, .explanation, .button-container').forEach(el => el.remove());
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result-message ${isCorrect ? 'correct' : 'incorrect'}`;
+            resultDiv.textContent = isCorrect ? '🎯 정답입니다!' : '오답입니다!';
+
+            const explanationDiv = document.createElement('div');
+            explanationDiv.className = 'explanation';
+            explanationDiv.innerHTML = `
+                <p><strong>${q.fullText ?? ''}</strong></p>
+                <p><strong>${q.answer ?? ''}</strong> - ${q.meaning ?? ''}</p>
+                <p>${q.explanation ?? ''}</p>
+            `;
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn next-btn';
+            nextBtn.textContent = questionNum < 3 ? '다음문제 🔁' : '결과보기 🎉';
+            nextBtn.onclick = () => goToNextQuestion(questionNum);
+
+            const btnWrap = document.createElement('div');
+            btnWrap.className = 'button-container';
+            btnWrap.appendChild(nextBtn);
+
+            currentScreen.appendChild(resultDiv);
+            currentScreen.appendChild(explanationDiv);
+            currentScreen.appendChild(btnWrap);
+        }
+
+        function goToNextQuestion(cur) {
+            if (cur < 3) {
+                showScreen(`question-${cur + 1}`);
+                displayQuestion(cur + 1);
+            } else {
+                showFinalResult();
+            }
+        }
+
+        function showFinalResult() {
+            const resultScreen = document.getElementById('result-screen');
+            resultScreen.querySelectorAll('.message-div').forEach(el => el.remove());
+
+            let title, desc, message;
+            if (correctAnswers === 3) {
+                title = '🥤 수능 만점가능자';
+                desc = '축하합니다!';
+                message = '🎉 축하합니다! 당신은 수능 만점가능자이시군요!!';
+                playSound('suc_01.mp3');
+            } else if (correctAnswers === 2) {
+                title = '🥤 수능 우수생가능자';
+                desc = '축하합니다!';
+                message = '🎉 축하합니다! 당신은 수능 우수생가능자시군요!';
+                playSound('suc_01.mp3');
+            } else if (correctAnswers === 1) {
+                title = '🥤 수능 만점희망자';
+                desc = '축하합니다!';
+                message = '🎉 축하합니다! 당신은 수능 만점희망자이시군요!';
+                playSound('suc_01.mp3');
+                createFireworks();
+            } else {
+                title = '🥤 수능 우수생 희망자';
+                desc = '아쉽습니다.';
+                message = '아쉽습니다. 다음엔 더 잘하실 수 있을 거에요!';
+                playSound('fail_02.mp3');
+            }
+
+            document.getElementById('cert-title').textContent = title;
+            document.getElementById('cert-desc').textContent = desc;
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message-div';
+            messageDiv.style.cssText = `
+                font-size: 1.3rem; font-weight:600; margin:20px 0; padding:15px; border-radius:12px;
+                background: linear-gradient(45deg, #4caf50, #45a049); color:white; text-align:center;
+            `;
+            messageDiv.textContent = message;
+
+            const certificate = document.getElementById('certificate');
+            resultScreen.insertBefore(messageDiv, certificate);
+            showScreen('result-screen');
+        }
+
+        function createFireworks() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const firework = document.createElement('div');
+                    firework.className = 'firework';
+                    firework.style.left = Math.random() * 100 + '%';
+                    firework.style.top = Math.random() * 100 + '%';
+                    document.getElementById('result-screen').appendChild(firework);
+                    setTimeout(() => firework.remove(), 2000);
+                }, i * 200);
+            }
+        }
+
+        function showFlyingImage() {
+            const img = document.createElement('img');
+            img.src = 'assets/ggg.png';
+            img.className = 'flying-image';
+            document.body.appendChild(img);
+            setTimeout(() => img.remove(), 4000);
+        }
+
+        function playSound(filename) {
+            const audio = new Audio(`assets/${filename}`);
+            audio.play().catch(() => {});
+        }
+
+        function goHome() {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+                screen.querySelectorAll('.result-message, .explanation, .button-container, .message-div').forEach(el => el.remove());
+            });
+            document.querySelectorAll('.option').forEach(opt => {
+                opt.classList.remove('correct', 'incorrect', 'selected');
+                opt.style.pointerEvents = 'auto';
+            });
+            showScreen('start-screen');
+        }
+
+        function saveCertificate() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 800; canvas.height = 600;
+
+            ctx.fillStyle = '#f8f9fa'; ctx.fillRect(0, 0, 800, 600);
+            ctx.strokeStyle = '#ffb300'; ctx.lineWidth = 10; ctx.strokeRect(5, 5, 790, 590);
+
+            ctx.fillStyle = '#b8860b'; ctx.font = 'bold 48px Noto Sans KR'; ctx.textAlign = 'center';
+            ctx.fillText('수능 영어 어휘 테스트', 400, 100);
+
+            ctx.font = 'bold 36px Noto Sans KR';
+            ctx.fillText(document.getElementById('cert-title').textContent, 400, 250);
+
+            ctx.font = '24px Noto Sans KR';
+            ctx.fillText('정답률: ' + correctAnswers + '/3', 400, 350);
+            ctx.fillText('발급일: ' + new Date().toLocaleDateString('ko-KR'), 400, 400);
+
+            const link = document.createElement('a');
+            link.download = '수능어휘테스트_인증서.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>
